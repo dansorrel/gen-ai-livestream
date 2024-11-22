@@ -34,7 +34,7 @@ system_prompt = """you are an experienced podcast host...
 # Google TTS Client
 client = texttospeech.TextToSpeechClient()
 speaker_voice_map = {
-    "Sascha": "ElevenLabs",
+    "Sascha": "en-US-Journey-M",
     "Marina": "en-US-Journey-O"
 }
 
@@ -64,29 +64,9 @@ def synthesize_speech_google(text, speaker, index):
     with open(filename, "wb") as out:
         out.write(response.audio_content)
 
-# ElevenLabs TTS function
-def synthesize_speech_elevenlabs(text, speaker, index):
-    data = {
-        "text": text,
-        "model_id": "eleven_turbo_v2_5",
-        "voice_settings": {
-            "stability": 0.5,
-            "similarity_boost": 0.75
-        }
-    }
-    response = requests.post(elevenlabs_url, json=data, headers=elevenlabs_headers)
-    filename = f"audio-files/{index}_{speaker}.mp3"
-    with open(filename, "wb") as out:
-        for chunk in response.iter_content(chunk_size=1024):
-            if chunk:
-                out.write(chunk)
-
 # Function to synthesize speech based on the speaker
 def synthesize_speech(text, speaker, index):
-    if speaker == "Sascha":
-        synthesize_speech_elevenlabs(text, speaker, index)
-    else:
-        synthesize_speech_google(text, speaker, index)
+    synthesize_speech_google(text, speaker, index)
 
 # Function to sort filenames naturally
 def natural_sort_key(filename):
